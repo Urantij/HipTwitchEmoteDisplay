@@ -6,12 +6,14 @@ namespace HipTwitchEmoteDisplay.Work;
 public class StealthActor : IHostedService
 {
     private readonly LinkGlobal _linkGlobal;
+    private readonly ILogger<StealthActor> _logger;
 
     private bool _hidden = false;
 
-    public StealthActor(LinkGlobal linkGlobal)
+    public StealthActor(LinkGlobal linkGlobal, ILogger<StealthActor> logger)
     {
         _linkGlobal = linkGlobal;
+        _logger = logger;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -35,6 +37,8 @@ public class StealthActor : IHostedService
         if (_hidden)
             return;
 
+        _logger.LogInformation("Прячемся");
+
         _hidden = true;
 
         ConsoleHidder.Hide();
@@ -44,7 +48,9 @@ public class StealthActor : IHostedService
     {
         if (!_hidden)
             return;
-        
+
+        _logger.LogInformation("Вскрываемся");
+
         _hidden = false;
 
         ConsoleHidder.Show();
