@@ -17,6 +17,7 @@ public class StealthActor : IHostedService
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _linkGlobal.UserJoined += LinkGlobalOnUserJoined;
+        _linkGlobal.NoUsersLeft += LinkGlobalOnNoUsersLeft;
 
         return Task.CompletedTask;
     }
@@ -24,6 +25,7 @@ public class StealthActor : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _linkGlobal.UserJoined -= LinkGlobalOnUserJoined;
+        _linkGlobal.NoUsersLeft -= LinkGlobalOnNoUsersLeft;
 
         return Task.CompletedTask;
     }
@@ -36,5 +38,15 @@ public class StealthActor : IHostedService
         _hidden = true;
 
         ConsoleHidder.Hide();
+    }
+
+    private void LinkGlobalOnNoUsersLeft()
+    {
+        if (!_hidden)
+            return;
+        
+        _hidden = false;
+
+        ConsoleHidder.Show();
     }
 }

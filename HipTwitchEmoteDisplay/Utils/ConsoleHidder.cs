@@ -21,4 +21,12 @@ public static class ConsoleHidder
         var handle = GetConsoleWindow();
         ShowWindow(handle, SW_HIDE);
     }
+
+    public static void Show()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+
+        var handle = GetConsoleWindow();
+        ShowWindow(handle, SW_SHOW);
+    }
 }
