@@ -8,10 +8,10 @@ namespace HipTwitchEmoteDisplay.Work;
 public class Retranslator : IHostedService
 {
     private readonly TwitchChatter _chatter;
-    private readonly IHubContext<LinkHub> _hub;
+    private readonly IHubContext<LinkHub, ILinkClient> _hub;
     private readonly ILogger<Retranslator> _logger;
 
-    public Retranslator(TwitchChatter chatter, IHubContext<LinkHub> hub, ILogger<Retranslator> logger)
+    public Retranslator(TwitchChatter chatter, IHubContext<LinkHub, ILinkClient> hub, ILogger<Retranslator> logger)
     {
         _chatter = chatter;
         _hub = hub;
@@ -45,7 +45,7 @@ public class Retranslator : IHostedService
         {
             try
             {
-                await _hub.Clients.All.SendAsync("Set", new LinkMessage(target.ImageUri.ToString()));
+                await _hub.Clients.All.Set(new LinkMessage(target.ImageUri.ToString()));
             }
             catch (Exception e)
             {

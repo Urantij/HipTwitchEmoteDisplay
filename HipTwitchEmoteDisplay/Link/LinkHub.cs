@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HipTwitchEmoteDisplay.Link;
 
-public class LinkHub : Hub
+public class LinkHub : Hub<ILinkClient>
 {
     private readonly LinkGlobal _global;
     private readonly ILogger<LinkHub> _logger;
