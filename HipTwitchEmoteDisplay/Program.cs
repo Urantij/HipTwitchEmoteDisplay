@@ -50,6 +50,11 @@ builder.Services.AddHostedSingleton<Retranslator>();
 builder.Services.AddHostedSingleton<ItsMyLife>();
 builder.Services.AddHostedSingleton<StealthActor>();
 
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddHostedSingleton<PageOpener>();
+}
+
 WebApplication app = builder.Build();
 
 app.MapHub<LinkHub>("/hub");
