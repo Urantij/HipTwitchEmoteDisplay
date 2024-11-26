@@ -4,6 +4,7 @@ using HipTwitchEmoteDisplay.Emotes;
 using HipTwitchEmoteDisplay.Emotes.Bttv;
 using HipTwitchEmoteDisplay.Emotes.Ffz;
 using HipTwitchEmoteDisplay.Emotes.SemTv;
+using HipTwitchEmoteDisplay.Emotes.Twitch;
 using HipTwitchEmoteDisplay.Link;
 using HipTwitchEmoteDisplay.Twitch;
 using HipTwitchEmoteDisplay.Utils;
@@ -29,6 +30,15 @@ builder.Services.AddOptions<AppConfig>()
 builder.Services.AddSingleton<IEmoter, SemTvEmoter>();
 builder.Services.AddSingleton<IEmoter, FfzEmoter>();
 builder.Services.AddSingleton<IEmoter, BttvEmoter>();
+if (builder.Configuration.GetSection(TwitchApiConfig.Key).Exists())
+{
+    builder.Services.AddOptions<TwitchApiConfig>()
+        .BindConfiguration(TwitchApiConfig.Key)
+        .Validate(config => config.ClientId != default && config.Secret != default)
+        .ValidateOnStart();
+    builder.Services.AddSingleton<IEmoter, TwitchEmoter>();
+    Console.WriteLine("Твич добавлен.");
+}
 
 builder.Services.AddHostedSingleton<EmoteVault>();
 
