@@ -17,4 +17,8 @@
       <Folder Include="wwwroot\scripts\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TwitchLib.Api\TwitchLib.Api\TwitchLib.Api.csproj" />
+    </ItemGroup>
+
 </Project>

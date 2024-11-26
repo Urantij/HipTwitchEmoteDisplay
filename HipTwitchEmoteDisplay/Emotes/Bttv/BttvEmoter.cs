@@ -18,7 +18,7 @@ public class BttvEmoter : BaseEmoter
     {
     }
 
-    protected override async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
+    public override async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
     {
         // https://api.betterttv.net/3/cached/emotes/global
 
@@ -29,13 +29,12 @@ public class BttvEmoter : BaseEmoter
         return global.Select(Create).ToArray();
     }
 
-    protected override async Task<Emote[]> GetChannelAsync(ulong channelId,
-        CancellationToken cancellationToken = default)
+    public override async Task<Emote[]> GetChannelAsync(CancellationToken cancellationToken = default)
     {
         // https://api.betterttv.net/3/cached/users/twitch/{twitchid}
 
         BttvChannel channel =
-            await GetEmotesAsync<BttvChannel>(new Uri($"https://api.betterttv.net/3/cached/users/twitch/{channelId}"),
+            await GetEmotesAsync<BttvChannel>(new Uri($"https://api.betterttv.net/3/cached/users/twitch/{_twitchId}"),
                 BttvSerializerContext.Default, cancellationToken);
 
         return channel.ChannelEmotes

@@ -21,7 +21,7 @@ public class FfzEmoter : BaseEmoter
     {
     }
 
-    protected override async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
+    public override async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
     {
         // https://api.frankerfacez.com/v1/set/global
 
@@ -34,13 +34,12 @@ public class FfzEmoter : BaseEmoter
             .ToArray();
     }
 
-    protected override async Task<Emote[]> GetChannelAsync(ulong channelId,
-        CancellationToken cancellationToken = default)
+    public override async Task<Emote[]> GetChannelAsync(CancellationToken cancellationToken = default)
     {
         // https://api.frankerfacez.com/v1/room/id/{twitch_id}
 
         FfzChannel channel =
-            await GetEmotesAsync<FfzChannel>(new Uri($"https://api.frankerfacez.com/v1/room/id/{channelId}"),
+            await GetEmotesAsync<FfzChannel>(new Uri($"https://api.frankerfacez.com/v1/room/id/{_twitchId}"),
                 FfzSerializerContext.Default, cancellationToken);
 
         return channel.Sets.SelectMany(s => s.Value.Emoticons).Select(Create).ToArray();
