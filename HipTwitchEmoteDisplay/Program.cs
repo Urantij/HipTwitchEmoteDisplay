@@ -50,7 +50,7 @@ builder.Services.AddHostedSingleton<Retranslator>();
 builder.Services.AddHostedSingleton<ItsMyLife>();
 builder.Services.AddHostedSingleton<StealthActor>();
 
-if (builder.Environment.IsProduction())
+if (builder.Environment.IsProduction() && builder.Configuration.GetValue<string>("urls") != null)
 {
     builder.Services.AddHostedSingleton<PageOpener>();
 }
