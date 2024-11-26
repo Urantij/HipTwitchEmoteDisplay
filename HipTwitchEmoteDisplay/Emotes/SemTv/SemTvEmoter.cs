@@ -19,7 +19,7 @@ public class SemTvEmoter : BaseEmoter
     {
     }
 
-    protected override async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
+    public override async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
     {
         // https://7tv.io/v3/emote-sets/global
 
@@ -30,12 +30,11 @@ public class SemTvEmoter : BaseEmoter
         return emoteSet.Emotes.Select(Create).ToArray();
     }
 
-    protected override async Task<Emote[]> GetChannelAsync(ulong channelId,
-        CancellationToken cancellationToken = default)
+    public override async Task<Emote[]> GetChannelAsync(CancellationToken cancellationToken = default)
     {
         // https://7tv.io/v3/users/twitch/{twitch_id}
 
-        SemChannel channel = await GetEmotesAsync<SemChannel>(new Uri($"https://7tv.io/v3/users/twitch/{channelId}"),
+        SemChannel channel = await GetEmotesAsync<SemChannel>(new Uri($"https://7tv.io/v3/users/twitch/{_twitchId}"),
             SemTvSerializerContext.Default,
             cancellationToken);
 

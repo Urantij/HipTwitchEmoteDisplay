@@ -4,13 +4,11 @@ using System.Text.Json.Serialization;
 
 namespace HipTwitchEmoteDisplay.Emotes;
 
-public abstract class BaseEmoter : BackgroundService
+public abstract class BaseEmoter : IEmoter
 {
     protected readonly ILogger _logger;
 
     protected readonly HttpClient _client;
-
-    protected readonly List<Emote> _emoteList = new();
 
     protected ulong _twitchId;
 
@@ -24,59 +22,13 @@ public abstract class BaseEmoter : BackgroundService
         });
     }
 
-    public Emote? TryGetEmote(string key)
-    {
-        lock (_emoteList)
-        {
-            return _emoteList.FirstOrDefault(e => e.Key == key);
-        }
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        Emote[] globalSet = await GetGlobalsAsync(stoppingToken);
-        lock (_emoteList)
-        {
-            _emoteList.AddRange(globalSet);
-        }
-
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            Emote[] channelSet;
-            try
-            {
-                channelSet = await GetChannelAsync(_twitchId, stoppingToken);
-            }
-            catch (JsonException)
-            {
-                _logger.LogCritical("Не удалось пропарсить ответ.");
-
-                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
-                continue;
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning("Не удалось получить ответ: {reason}", e.Message);
-
-                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
-                continue;
-            }
-
-            int count;
-            lock (_emoteList)
-            {
-                _emoteList.Clear();
-                _emoteList.AddRange(globalSet);
-                _emoteList.AddRange(channelSet);
-
-                count = _emoteList.Count;
-            }
-
-            _logger.LogDebug("Всосали {count} эмоутов.", count);
-
-            await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
-        }
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <exception cref="HttpRequestException"></exception>
+    /// <exception cref="TaskCanceledException"></exception>
+    /// <exception cref="JsonException"></exception>
+    public abstract Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 
@@ -84,15 +36,7 @@ public abstract class BaseEmoter : BackgroundService
     /// <exception cref="HttpRequestException"></exception>
     /// <exception cref="TaskCanceledException"></exception>
     /// <exception cref="JsonException"></exception>
-    protected abstract Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <exception cref="HttpRequestException"></exception>
-    /// <exception cref="TaskCanceledException"></exception>
-    /// <exception cref="JsonException"></exception>
-    protected abstract Task<Emote[]> GetChannelAsync(ulong channelId, CancellationToken cancellationToken = default);
+    public abstract Task<Emote[]> GetChannelAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 

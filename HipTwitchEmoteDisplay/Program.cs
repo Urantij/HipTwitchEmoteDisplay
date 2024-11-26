@@ -26,11 +26,11 @@ builder.Services.AddOptions<AppConfig>()
     .Validate(config => config.TwitchUsername != default && config.TwitchId != default)
     .ValidateOnStart();
 
-builder.Services.AddHostedSingletonAsService<BaseEmoter, SemTvEmoter>();
-builder.Services.AddHostedSingletonAsService<BaseEmoter, FfzEmoter>();
-builder.Services.AddHostedSingletonAsService<BaseEmoter, BttvEmoter>();
+builder.Services.AddSingleton<IEmoter, SemTvEmoter>();
+builder.Services.AddSingleton<IEmoter, FfzEmoter>();
+builder.Services.AddSingleton<IEmoter, BttvEmoter>();
 
-builder.Services.AddSingleton<EmoteVault>();
+builder.Services.AddHostedSingleton<EmoteVault>();
 
 builder.Services.AddSingleton<LinkGlobal>();
 
