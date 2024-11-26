@@ -13,7 +13,7 @@ public class TwitchEmoter : IEmoter
     public TwitchEmoter(IOptions<AppConfig> options, IOptions<TwitchApiConfig> apiOptions)
     {
         _twitchId = options.Value.TwitchId;
-        
+
         _api = new TwitchAPI();
         _api.Settings.ClientId = apiOptions.Value.ClientId;
         _api.Settings.Secret = apiOptions.Value.Secret;
@@ -22,8 +22,8 @@ public class TwitchEmoter : IEmoter
     public async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
     {
         GetGlobalEmotesResponse response = await _api.Helix.Chat.GetGlobalEmotesAsync();
-        
-        return response.GlobalEmotes.Select(emote => Create(response.Template, emote)).ToArray(); 
+
+        return response.GlobalEmotes.Select(emote => Create(response.Template, emote)).ToArray();
     }
 
     public async Task<Emote[]> GetChannelAsync(CancellationToken cancellationToken = default)
@@ -48,6 +48,15 @@ public class TwitchEmoter : IEmoter
         string scale = scales.Last();
         string theme = themes.Contains("dark") ? "dark" : themes.First();
 
-        return new Uri(string.Format(template, id, format, theme, scale));
+        return new Uri(template
+            .Replace("{{id}}", id)
+            .Replace("{{format}}", format)
+            .Replace("{{theme_mode}}", theme)
+            .Replace("{{scale}}", scale)
+        );
+
+        // template = template.Replace("{{", "{").Replace("}}", "}");
+        //
+        // return new Uri(string.Format(template, id, format, theme, scale));
     }
 }

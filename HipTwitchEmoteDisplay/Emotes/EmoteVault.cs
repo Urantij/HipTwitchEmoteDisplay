@@ -44,7 +44,17 @@ public class EmoteVault : BackgroundService
 
     private async Task LoopEmoter(IEmoter emoter, CancellationToken cancellationToken)
     {
-        Emote[] globalEmotes = await emoter.GetGlobalsAsync(cancellationToken);
+        Emote[] globalEmotes;
+        try
+        {
+            globalEmotes = await emoter.GetGlobalsAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Не удалось всосать глобал. {name}", emoter.GetType().Name);
+            throw;
+        }
+
         lock (_emoteSets)
         {
             EmoteSet set = _emoteSets.First(set => set.Emoter == emoter);
