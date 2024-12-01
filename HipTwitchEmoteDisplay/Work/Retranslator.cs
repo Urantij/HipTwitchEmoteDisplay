@@ -34,18 +34,18 @@ public class Retranslator : IHostedService
 
     private void ChatterOnYes(ChatYes obj)
     {
-        if (obj.Emotes.Length != 1)
+        if (obj.Instances.Length != 1)
             return;
 
-        Emote target = obj.Emotes[0];
+        EmoteInstance target = obj.Instances[0];
 
-        _logger.LogDebug("Отправляем смайл {name}", target.Key);
+        _logger.LogDebug("Отправляем смайл {name}", target.Emote.Key);
 
         Task.Run(async () =>
         {
             try
             {
-                await _hub.Clients.All.Set(new LinkMessage(target.ImageUri.ToString()));
+                await _hub.Clients.All.Set(new LinkMessage(target.Emote.ImageUri.ToString()));
             }
             catch (Exception e)
             {

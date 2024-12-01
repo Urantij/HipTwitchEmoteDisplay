@@ -1,4 +1,5 @@
 using System.Text.Json;
+using HipTwitchEmoteDisplay.Emotes.Twitch;
 
 namespace HipTwitchEmoteDisplay.Emotes;
 
@@ -40,6 +41,32 @@ public class EmoteVault : BackgroundService
         }
 
         return result;
+    }
+
+    public Emote MakeEmoteFromId(string key, string id)
+    {
+        string template = GetEmoteUriTemplate();
+
+        Uri emoteUri = new(template
+            .Replace("{{id}}", id)
+            .Replace("{{format}}", "default")
+            .Replace("{{theme_mode}}", "dark")
+            .Replace("{{scale}}", "4.0")
+        );
+
+        return new Emote(key, emoteUri);
+    }
+
+    /// <summary>
+    /// // "template": "https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
+    /// </summary>
+    /// <returns></returns>
+    private string GetEmoteUriTemplate()
+    {
+        TwitchEmoter? twitchEmoter = _emoters.OfType<TwitchEmoter>().FirstOrDefault();
+
+        return twitchEmoter?.EmoteUriTemplate ??
+               "https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}";
     }
 
     private async Task LoopEmoter(IEmoter emoter, CancellationToken cancellationToken)

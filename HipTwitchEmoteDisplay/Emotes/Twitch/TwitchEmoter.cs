@@ -10,6 +10,8 @@ public class TwitchEmoter : IEmoter
     private readonly TwitchAPI _api;
     private readonly ulong _twitchId;
 
+    public string? EmoteUriTemplate { get; private set; }
+
     public TwitchEmoter(IOptions<AppConfig> options, IOptions<TwitchApiConfig> apiOptions)
     {
         _twitchId = options.Value.TwitchId;
@@ -22,6 +24,8 @@ public class TwitchEmoter : IEmoter
     public async Task<Emote[]> GetGlobalsAsync(CancellationToken cancellationToken = default)
     {
         GetGlobalEmotesResponse response = await _api.Helix.Chat.GetGlobalEmotesAsync();
+
+        EmoteUriTemplate = response.Template;
 
         return response.GlobalEmotes.Select(emote => Create(response.Template, emote)).ToArray();
     }
