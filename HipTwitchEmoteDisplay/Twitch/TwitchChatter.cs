@@ -98,6 +98,6 @@ public partial class TwitchChatter : IHostedService
     [GeneratedRegex(@"(?<id>.+?):(?<start>\d+)-(?<end>\d+)", RegexOptions.Compiled)]
     private static partial Regex MyEmoteRegex();
 
-    [GeneratedRegex(@".+?(?=\s|$)")]
+    [GeneratedRegex(@"[^\s]+?(?=\s|$)")]
     private static partial Regex MyWordRegex();
 }
