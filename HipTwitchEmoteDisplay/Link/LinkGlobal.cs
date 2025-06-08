@@ -1,5 +1,8 @@
 namespace HipTwitchEmoteDisplay.Link;
 
+/// <summary>
+/// Глобальное хранилище клиентов.
+/// </summary>
 public class LinkGlobal
 {
     private readonly List<string> _users = new();

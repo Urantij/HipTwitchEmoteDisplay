@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace HipTwitchEmoteDisplay.Emotes;
 
+/// <summary>
+/// Базовый клас для сервисов, которые всасывают эмоуты. <see cref="Bttv.BttvEmoter"/> <see cref="Ffz.FfzEmoter"/> <see cref="SemTv.SemTvEmoter"/>
+/// </summary>
 public abstract class BaseEmoter : IEmoter
 {
     protected readonly ILogger _logger;

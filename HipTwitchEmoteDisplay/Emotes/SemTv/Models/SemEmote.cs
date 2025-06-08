@@ -28,6 +28,9 @@ public class SemEmote
 
     [JsonPropertyName("name")] public string Name { get; }
 
+    /// <summary>
+    /// 1 == zerowidth
+    /// </summary>
     [JsonPropertyName("flags")] public int? Flags { get; }
 
     // [JsonPropertyName("timestamp")] public object Timestamp { get; }
@@ -37,4 +40,12 @@ public class SemEmote
     [JsonPropertyName("data")] public SemData Data { get; }
 
     // [JsonPropertyName("origin_id")] public object OriginId { get; }
+
+    public bool IsZeroWidth()
+    {
+        if (Flags == null)
+            return false;
+
+        return (Flags.Value & 1) != 0;
+    }
 }

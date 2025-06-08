@@ -3,6 +3,9 @@ using HipTwitchEmoteDisplay.Emotes.Twitch;
 
 namespace HipTwitchEmoteDisplay.Emotes;
 
+/// <summary>
+/// Хранилище всех эмоутов, которые нам известны.
+/// </summary>
 public class EmoteVault : BackgroundService
 {
     class EmoteSet(IEmoter emoter)
@@ -54,7 +57,7 @@ public class EmoteVault : BackgroundService
             .Replace("{{scale}}", "4.0")
         );
 
-        return new Emote(key, emoteUri);
+        return new Emote(key, emoteUri, 1);
     }
 
     /// <summary>

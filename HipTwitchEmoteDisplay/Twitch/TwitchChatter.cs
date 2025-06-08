@@ -6,6 +6,9 @@ using TwitchSimpleLib.Chat.Messages;
 
 namespace HipTwitchEmoteDisplay.Twitch;
 
+/// <summary>
+/// Сервис сидит в чате твича и выуживает эмоуты из сообщений.
+/// </summary>
 public partial class TwitchChatter : IHostedService
 {
     private readonly EmoteVault _emoteVault;
@@ -51,22 +54,53 @@ public partial class TwitchChatter : IHostedService
 
     private void ChannelOnPrivateMessageReceived(object? sender, TwitchPrivateMessage e)
     {
-        EmoteInstance[] officialEmotes = GetEmotesFromMessage(e).ToArray();
+        InTextEmote[] officialEmotes = GetEmotesFromMessage(e).ToArray();
 
         // Это крайне неэффективно, но я не в настроении делать идущий по строке цикл. TODO
         MatchCollection matches = _wordRegex.Matches(e.text);
 
+        // xdd
+
+        int emoteNum = 0;
         EmoteInstance[] instances = matches.Select(match =>
             {
+                InTextEmote? ofEmoteInstance = officialEmotes.FirstOrDefault(ofE => ofE.Start == match.Index);
+
+                if (ofEmoteInstance != null)
+                    return ofEmoteInstance;
+
                 Emote? emote = _emoteVault.TryGetEmote(match.Value);
-                return emote == null ? null : new EmoteInstance(emote, match.Index);
+
+                return emote == null ? null : new InTextEmote(emote, match.Index);
             })
-            .Where(instance =>
-                instance != null &&
-                officialEmotes.All(officialInstance => officialInstance.Start != instance.Start))
-            .Select(instance => instance!)
-            .Concat(officialEmotes)
+            .GroupBy(inTextEmote =>
+            {
+                if (inTextEmote == null)
+                {
+                    emoteNum++;
+                    return -1;
+                }
+
+                if (!inTextEmote.Emote.ZeroWidth)
+                    emoteNum++;
+
+                return emoteNum;
+            })
+            .Where(g => g.Key != -1)
+            .Select(g => new EmoteInstance(g.Select(ite => ite.Emote).ToArray()))
             .ToArray();
+
+        // InTextEmote[] instances = matches.Select(match =>
+        //     {
+        //         Emote? emote = _emoteVault.TryGetEmote(match.Value);
+        //         return emote == null ? null : new InTextEmote(emote, match.Index);
+        //     })
+        //     .Where(instance =>
+        //         instance != null &&
+        //         officialEmotes.All(officialInstance => officialInstance.Start != instance.Start))
+        //     .Select(instance => instance!)
+        //     .Concat(officialEmotes)
+        //     .ToArray();
 
         if (instances.Length == 0)
             return;
@@ -74,7 +108,7 @@ public partial class TwitchChatter : IHostedService
         Yes?.Invoke(new ChatYes(e.username, instances));
     }
 
-    private IEnumerable<EmoteInstance> GetEmotesFromMessage(TwitchPrivateMessage e)
+    private IEnumerable<InTextEmote> GetEmotesFromMessage(TwitchPrivateMessage e)
     {
         if (e.rawIrcMessage.tags?.TryGetValue("emotes", out string? emoteString) != true || emoteString == null)
             yield break;
@@ -91,7 +125,7 @@ public partial class TwitchChatter : IHostedService
 
             Emote emote = _emoteVault.MakeEmoteFromId(emoteKey, emoteId);
 
-            yield return new EmoteInstance(emote, start);
+            yield return new InTextEmote(emote, start);
         }
     }
 

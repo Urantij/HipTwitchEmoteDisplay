@@ -2,6 +2,10 @@ using System.Diagnostics;
 
 namespace HipTwitchEmoteDisplay.Work;
 
+/// <summary>
+/// Сервис после запуска приложения пытается открыть страницу.
+/// Получается не всегда, надо сказать.
+/// </summary>
 public class PageOpener : IHostedService
 {
     private readonly IHostApplicationLifetime _lifetime;

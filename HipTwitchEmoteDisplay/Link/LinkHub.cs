@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HipTwitchEmoteDisplay.Link;
 
+/// <summary>
+/// Хаб, который ловит сообщения клиентов.
+/// </summary>
 public class LinkHub : Hub<ILinkClient>
 {
     private readonly LinkGlobal _global;

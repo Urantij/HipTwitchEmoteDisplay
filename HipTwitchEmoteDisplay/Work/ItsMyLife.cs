@@ -2,6 +2,9 @@ using HipTwitchEmoteDisplay.Link;
 
 namespace HipTwitchEmoteDisplay.Work;
 
+/// <summary>
+/// Сервис следит, когда все пользователи отключатся, и через 20 сек всё вырубает, если новых юзеров не появилось.
+/// </summary>
 public class ItsMyLife : IHostedService
 {
     private readonly LinkGlobal _linkGlobal;

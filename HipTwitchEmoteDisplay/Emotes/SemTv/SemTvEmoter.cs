@@ -51,6 +51,12 @@ public class SemTvEmoter : BaseEmoter
         // //cdn.7tv.app/emote/01EZPHBW3G000C438200A44F1C
         Uri uri = new("https:" + emote.Data.Host.Url + "/" + file.Name);
 
-        return new Emote(emote.Name, uri);
+        float ration;
+        if (file is { Width: not null, Height: not null })
+            ration = (float)file.Width.Value / (float)file.Height.Value;
+        else
+            ration = 1;
+
+        return new Emote(emote.Name, uri, ration, zeroWidth: emote.IsZeroWidth());
     }
 }

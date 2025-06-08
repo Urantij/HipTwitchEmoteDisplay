@@ -47,6 +47,8 @@ public class FfzEmoter : BaseEmoter
 
     private static Emote Create(FfzEmoticon arg)
     {
-        return new Emote(arg.Name, arg.Urls.Last().Value);
+        float ration = (float)arg.Width / (float)arg.Height;
+
+        return new Emote(arg.Name, arg.Urls.Last().Value, ration);
     }
 }

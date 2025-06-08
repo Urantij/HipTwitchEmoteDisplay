@@ -3,6 +3,10 @@ using HipTwitchEmoteDisplay.Utils;
 
 namespace HipTwitchEmoteDisplay.Work;
 
+/// <summary>
+/// Сервис пытается скрыть окно консоли, когда подключается юзер.
+/// Тока на винде.
+/// </summary>
 public class StealthActor : IHostedService
 {
     private readonly LinkGlobal _linkGlobal;

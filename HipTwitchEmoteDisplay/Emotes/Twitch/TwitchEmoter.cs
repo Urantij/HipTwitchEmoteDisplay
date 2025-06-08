@@ -40,7 +40,7 @@ public class TwitchEmoter : IEmoter
     private static Emote Create(string template, TwitchLib.Api.Helix.Models.Chat.Emotes.Emote twitchEmote)
     {
         return new Emote(twitchEmote.Name,
-            CreateUri(template, twitchEmote.Id, twitchEmote.Format, twitchEmote.Scale, twitchEmote.ThemeMode));
+            CreateUri(template, twitchEmote.Id, twitchEmote.Format, twitchEmote.Scale, twitchEmote.ThemeMode), 1);
     }
 
     private static Uri CreateUri(string template, string id, string[] formats, string[] scales, string[] themes)

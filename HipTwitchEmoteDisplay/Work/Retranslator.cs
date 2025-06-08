@@ -7,6 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace HipTwitchEmoteDisplay.Work;
 
+/// <summary>
+/// Сервис ловит сообщения из чата твича и отправляет их клиентам.
+/// </summary>
 public class Retranslator : IHostedService
 {
     private readonly TwitchChatter _chatter;
@@ -58,13 +61,17 @@ public class Retranslator : IHostedService
         if (target == null)
             return;
 
-        _logger.LogDebug("Отправляем смайл {name}", target.Emote.Key);
+        _logger.LogDebug("Отправляем смайл {name}", string.Join(", ", target.Emotes.Select(e => e.Key)));
+
+        LinkMessage message = new(
+            target.Emotes.Select(e => new DisplayEmoteInfo(e.ImageUri.ToString(), e.WidthByHeight)).ToArray()
+        );
 
         Task.Run(async () =>
         {
             try
             {
-                await _hub.Clients.All.Set(new LinkMessage(target.Emote.ImageUri.ToString()));
+                await _hub.Clients.All.Set(message);
             }
             catch (Exception e)
             {

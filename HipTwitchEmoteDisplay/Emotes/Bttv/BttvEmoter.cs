@@ -47,6 +47,12 @@ public class BttvEmoter : BaseEmoter
     {
         // https://cdn.betterttv.net/emote/5a970ab2122e4331029f0d7e/3x
 
-        return new Emote(arg.Code, new Uri($"https://cdn.betterttv.net/emote/{arg.Id}/3x"));
+        float ration;
+        if (arg is { Width: not null, Height: not null })
+            ration = (float)arg.Width.Value / (float)arg.Height.Value;
+        else
+            ration = 1;
+
+        return new Emote(arg.Code, new Uri($"https://cdn.betterttv.net/emote/{arg.Id}/3x"), ration);
     }
 }
